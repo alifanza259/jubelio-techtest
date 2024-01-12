@@ -1,0 +1,116 @@
+<html>
+
+<head>
+    <title>Homepage</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script>
+        async function sendFetchRequest(apiUrl, method, headers, payload) {
+            try {
+                const response = await fetch(apiUrl, {
+                    method,
+                    headers,
+                    ...(!!payload ? { body: JSON.stringify(payload) } : {})
+                })
+                if (!response.ok) throw new Error(response.statusText)
+
+                alert("Sukses")
+                return response
+            } catch (error) {
+                console.error(error.message)
+                alert("Maaf terjadi kesalahan")
+            }
+        }
+
+        async function login() {
+            const email = document.getElementById("email").value
+            const password = document.getElementById("password").value
+
+            if (!email || !password) {
+                alert("All input must be filled")
+                return
+            }
+
+            const apiUrl = "http://localhost:8081/login"
+            const payload = {
+                email,
+                password
+            }
+            const headers = {
+                "Content-Type": "application/json"
+            }
+
+            try {
+                const response = await sendFetchRequest(apiUrl, "POST", headers, payload)
+                const data = await response.json()
+
+                sessionStorage.setItem('accessToken', data.token);
+                sessionStorage.setItem('userId', data.user.id);
+                location.reload()
+            } catch (error) {
+
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="guest" hidden>
+        <div class="container mt-5">
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-3">
+                    <div class="card px-4 py-5" id="form1">
+                        <div class="form-data">
+                            <div class="forms-inputs mb-4"> <span>Email</span> <input autocomplete="off" type="text"
+                                    v-model="email" id="email">
+                            </div>
+                            <div class="forms-inputs mb-4"> <span>Password</span> <input autocomplete="off"
+                                    type="password" v-model="password" id="password">
+                            </div>
+                            <div class="mb-3"> <button class="btn btn-dark w-100" onclick="login()">Login</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="logged-in" hidden>
+        <div class="container mt-5">
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-3">
+                    <div class="card px-4 py-5" id="form1">
+                        <div class="form-data">
+                            <div class="mb-3"> <button class="btn btn-dark w-100"
+                                    onclick="window.location.href='chat.html'">Go to chat
+                                    app</button></div>
+                            <br>
+                            <div class="mb-3"> <button class="btn btn-dark w-100" onclick="logout()">Logout</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        (function () {
+            if (sessionStorage.getItem('userId') != null) {
+                document.getElementsByClassName("logged-in")[0].removeAttribute("hidden")
+            } else {
+                document.getElementsByClassName("guest")[0].removeAttribute("hidden")
+            }
+        })();
+
+
+
+        function logout() {
+            sessionStorage.clear();
+            location.reload()
+        }
+    </script>
+</body>
+
+</html>

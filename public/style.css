@@ -1,0 +1,19 @@
+.avatar-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.avatar-username {
+    font-size: 12px;
+}
+
+.timestamp {
+    text-align: right;
+}
+
+img {
+    width: 100px;
+    height: 100px;
+}
